@@ -8,7 +8,7 @@ cd /utage/
 git add .
 git commit -a -m "backup"
 
-for TO in 241 243 249 254
+for TO in 241 243 249 251 252 253 254
 do
 
   for DIR in etc var home
@@ -27,7 +27,7 @@ ssh -p ${TO}0 7korobi@192.168.0.$TO "
 "
 rsync -r -e "ssh -p ${TO}0" 192.168.0.$TO:/data/backup/ /c/backup/data/
 
-TO=249
+TO=253
 for DIR in giji_rails giji_log giji_socketstream
 do
     mkdir -p /c/backup/www/$DIR/

@@ -29,6 +29,18 @@ reload)
   touch /www/$APP/tmp/restart.txt
   ;;
 
+ruby-install)
+  cd ~/.rbenv
+  git pull
+  cd ~/.rbenv/plugins/ruby-build/
+  git pull
+  rbenv install 2.0.0-p247
+
+  cd /www/$APP
+  rbenv shell 2.0.0-p247
+  gem install bundler
+  ~/.rbenv/shims/bundle install
+  ;;
 
 bundle-install)
   ~/.rbenv/shims/bundle install
@@ -48,7 +60,7 @@ resque)
 
 QUEUE)
   rm .ruby-version 
-  export RBENV_VERSION=1.9.3-p429
+  export RBENV_VERSION=2.0.0-p247 
   export LIST=giji_rsyncs,giji_schedules,giji_vils
   $0 kill TERM "rake resque:"
   $0 kill QUIT "Waiting for $LIST"
@@ -110,7 +122,9 @@ tail)
   echo  "Usage: $0 command"
   echo
   echo  "  command : status start stop restart reload"
-  echo  "          : bundle-update bundle-install resque QUEUE time"
+  echo  "          : resque QUEUE time"
   echo  "          : kill exec  s server test  c console  tail-log"
+  echo  "          : "
+  echo  "          : bundle-update bundle-install ruby-install"
   echo  "  product : $APP"
 esac

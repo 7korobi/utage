@@ -1,4 +1,9 @@
 #! /bin/sh
 
-mongorestore --host 192.168.0.100 --indexesLast -d giji /data/mongo/giji
+if [ "" != "$1" ]
+then
+  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --noobjcheck --drop --collection $1 /data/mongo/giji/$1.bson 
+else
+  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji
+fi
 
