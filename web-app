@@ -54,18 +54,17 @@ resque)
   $0 kill TERM "resque-web"
   $0 kill QUIT "resque-scheduler-"
 
-  PIDFILE=/utage/run/resque-scheduler.pid BACKGROUND=yes rbenv exec rake resque:scheduler 1> /dev/null 2> /dev/null
-  rbenv exec resque-web -p $RESQUE_PORT config/initializers/resque.rb                     1> /dev/null 2> /dev/null
+  PIDFILE=/utage/run/resque-scheduler.pid rbenv exec rake resque:scheduler 1> /dev/null 2> /dev/null &
+  rbenv exec resque-web -p $RESQUE_PORT config/initializers/resque.rb      1> /dev/null 2> /dev/null
   ;;
 
 QUEUE)
   rm .ruby-version 
-  export RBENV_VERSION=2.0.0-p247 
+  export RBENV_VERSION=1.9.3-p429 
   export LIST=giji_rsyncs,giji_schedules,giji_vils
   $0 kill TERM "rake resque:"
   $0 kill QUIT "Waiting for $LIST"
 
-  echo QUEUE=$LIST PIDFILE=/utage/run/resque.pid rbenv exec rake environment resque:work       1> /dev/null 2> /dev/null &
   QUEUE=$LIST PIDFILE=/utage/run/resque.pid rbenv exec rake environment resque:work       1> /dev/null 2> /dev/null &
   ;;
 
