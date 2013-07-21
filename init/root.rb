@@ -3,10 +3,6 @@
 no = ARGV[0][0..2]
 hwaddr = no[1..2]
 
-system %Q|chmod 777 /usr/local/bin/rbenv-install /usr/local/bin/ruby-build|
-system %Q|mkdir -p     /usr/local/share/ruby-build/|
-system %Q|chmod -R 777 /usr/local/share/ruby-build/|
-
 open('/etc/sysconfig/network-scripts/ifcfg-eth0','w').puts <<-_SH_
 DEVICE="eth0"
 BOOTPROTO="static"
@@ -40,10 +36,10 @@ _SH_
 
 
 open('/etc/hosts','w').puts <<-_SH_
-183.181.24.203  giji.check.jp
+192.168.0.249  mongo.family.jp
 192.168.0.100  utage.family.jp
 192.168.0.101     tv.family.jp
-192.168.0.249  mongo.family.jp
+183.181.24.203  giji.check.jp
 _SH_
 
 
@@ -54,10 +50,12 @@ _SH_
 
 
 commands = <<-_SH_
+chkconfig iptables off
+chkconfig ip6tables off
+
 mkdir -p /www/giji_rails /utage
 chown -R 7korobi:users /www /utage /home/7korobi/.bash_profile /home/7korobi/.ssh/authorized_keys
 chmod 600  /home/7korobi/.ssh/authorized_keys
-cd /  && git init
 _SH_
 commands.each_line {|sh| system sh}
 

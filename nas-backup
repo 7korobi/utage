@@ -8,9 +8,8 @@ cd /utage/
 git add .
 git commit -a -m "backup"
 
-for TO in 241 243 249 251 252 253 254
+for TO in 241 243 251 252 253 254
 do
-
   for DIR in etc var home
   do
     ssh -p ${TO}0 root@192.168.0.$TO "cd /$DIR/  && git commit -a -m backup"
@@ -18,7 +17,7 @@ do
   done
 done
 
-TO=241
+TO=243
 ssh -p ${TO}0 7korobi@192.168.0.$TO "
   rdiff-backup --remove-older-than 3M /data/backup/mongo/ &
   mongodump -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji -o /data/mongo/
@@ -27,7 +26,7 @@ ssh -p ${TO}0 7korobi@192.168.0.$TO "
 "
 rsync -r -e "ssh -p ${TO}0" 192.168.0.$TO:/data/backup/ /c/backup/data/
 
-TO=253
+TO=252
 for DIR in giji_rails giji_log giji_socketstream
 do
     mkdir -p /c/backup/www/$DIR/

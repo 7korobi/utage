@@ -6,6 +6,6 @@
 
 ssh-241       rdiff-backup --list-increments /data/backup/mongo
 echo
-ssh-249       /utage/git-log-graph /www
+ssh-252       /utage/git-log-graph /www
 ssh-readynas  /utage/git-log-graph /c/media/Album
 ssh-readynas  /utage/git-log-graph /c/media

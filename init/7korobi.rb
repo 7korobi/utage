@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby-local-exec
 
-node="v0.6.19"
-ss  ="0.3.0RC2"
-
 no = ARGV[0][0..2]
 hwaddr = no[1..2]
 
@@ -24,7 +21,7 @@ export SSH_PORT
 export WEB_PORT
 export WSS_PORT
 export RESQUE_PORT
-export RBENV_VERSION=2.0.0-p195
+export RBENV_VERSION=2.0.0-p247
 export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
 
