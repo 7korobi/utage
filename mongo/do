@@ -1,0 +1,6 @@
+#! /bin/bash
+
+echo "use giji"  > /tmp/mongo.js
+coffee -p /utage/mongo/$1.coffee >> /tmp/mongo.js
+
+/usr/bin/mongo --host mongo.family.jp < /tmp/mongo.js

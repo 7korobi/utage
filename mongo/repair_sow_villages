@@ -1,0 +1,10 @@
+#! /bin/bash
+
+for COLLECTION in events stories
+do
+  /usr/bin/mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --noobjcheck --collection ${COLLECTION}  /data/mongo/giji/${COLLECTION}.bson 
+done
+
+echo "use giji"              > /tmp/mongo.js
+echo "db.repairDatabase();" >> /tmp/mongo.js
+/usr/bin/mongo --host mongo.family.jp < /tmp/mongo.js

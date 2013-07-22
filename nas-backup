@@ -8,6 +8,17 @@ cd /utage/
 git add .
 git commit -a -m "backup"
 
+
+TO=243
+ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/mongo/backup_giji
+
+SRC=/data/mongo/$TARGET
+OLD=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
+date "+${TARGET}-%Y-%m-%d" | xargs mkdir
+NEW=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
+rsync -av -e "ssh -p ${TO}0" --link-dest $OLD/ 192.168.0.$TO:$SRC/ $NEW/
+
+
 for TO in 241 243 251 252 253 254
 do
   for DIR in etc var home
@@ -17,14 +28,6 @@ do
   done
 done
 
-TO=243
-ssh -p ${TO}0 7korobi@192.168.0.$TO "
-  rdiff-backup --remove-older-than 3M /data/backup/mongo/ &
-  mongodump -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji -o /data/mongo/
-
-  rdiff-backup --print /data/mongo/  /data/backup/mongo/
-"
-rsync -r -e "ssh -p ${TO}0" 192.168.0.$TO:/data/backup/ /c/backup/data/
 
 TO=252
 for DIR in giji_rails giji_log giji_socketstream

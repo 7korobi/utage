@@ -6,7 +6,7 @@ do
   ssh -p ${TO}0 root@192.168.0.$TO  "
     add-apt-repository ppa:stebbins/handbrake-releases
     apt-get update
-    apt-get install git handbrake-cli mongodb-client librsync-dev rdiff-backup
+    apt-get install git handbrake-cli mongodb-client
 
     cd /etc/   && git init && git add  /etc/fstab /etc/hosts /etc/ssh/sshd_config /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/yum.repos.d
     cd /var/   && git init && git add  /var/spool/
