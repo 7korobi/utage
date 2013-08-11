@@ -4,7 +4,8 @@
 # ssh-254       /utage/git-log-graph /etc
 # ssh-readynas  /utage/git-log-graph /etc
 
-ssh-readynas  ls -dtr /c/backup/data/*
+ssh-readynas  ls -d /c/backup/data/*
+ssh-249       cat /tmp/mongod.bson.log
 echo
 ssh-252       /utage/git-log-graph /www
 ssh-readynas  /utage/git-log-graph /c/media/Album

@@ -2,8 +2,8 @@
 
 if [ "" != "$1" ]
 then
-  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --noobjcheck --drop --collection $1 /data/mongo/giji/$1.bson 
+  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --objcheck --journal --collection $1 /data/mongo/giji/$1.bson 
 else
-  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji
+  mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --objcheck --journal 
 fi
 

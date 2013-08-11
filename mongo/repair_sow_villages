@@ -1,10 +1,14 @@
 #! /bin/bash
 
-for COLLECTION in events stories
-do
-  /usr/bin/mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --noobjcheck --collection ${COLLECTION}  /data/mongo/giji/${COLLECTION}.bson 
-done
+echo "use giji"                            > /tmp/validate.js
+coffee -p -b /utage/mongo/validate.coffee >> /tmp/validate.js
 
-echo "use giji"              > /tmp/mongo.js
-echo "db.repairDatabase();" >> /tmp/mongo.js
-/usr/bin/mongo --host mongo.family.jp < /tmp/mongo.js
+/usr/bin/mongo --host mongo.family.jp < /tmp/validate.js | 
+  grep false && exit
+
+if [ "" != "$1" ]
+  for COLLECTION in events stories
+  do
+    /usr/bin/mongorestore -u 7korobi -p kotatsu3 --host mongo.family.jp -d giji --objcheck --collection ${COLLECTION}  /c/backup/data/giji-$1/${COLLECTION}.bson 
+  done
+fi

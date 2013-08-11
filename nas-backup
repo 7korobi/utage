@@ -10,8 +10,10 @@ git commit -a -m "backup"
 
 
 TO=243
+TARGET=giji
 ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/mongo/backup_giji
 
+cd /c/backup/data/
 SRC=/data/mongo/$TARGET
 OLD=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
 date "+${TARGET}-%Y-%m-%d" | xargs mkdir

@@ -1,0 +1,7 @@
+#! /bin/sh
+
+for TO in 243
+do
+  rsync -r -e "ssh -p ${TO}0" $1/ 7korobi@192.168.0.$TO:/data/mongo/giji/
+done
+
