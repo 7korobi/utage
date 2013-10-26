@@ -6,3 +6,4 @@ coffee -p -b /utage/mongo/validate.coffee >> /tmp/validate.js
 /usr/bin/mongo --host mongo.family.jp < /tmp/validate.js | 
   grep false ||
   /usr/bin/mongodump --journal --forceTableScan  --host mongo.family.jp -u 7korobi -p kotatsu3 -d giji -o /data/mongo/
+

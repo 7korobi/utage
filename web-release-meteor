@@ -1,0 +1,6 @@
+
+
+/utage/web-push-251 /www/giji_meteor  --delete --exclude='.meteor' --exclude='.git' --exclude='*.bak' &
+/utage/web-push-251 /utage            --delete &
+
+/utage/ssh-251 web-meteor run log_leader

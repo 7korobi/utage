@@ -1,0 +1,14 @@
+#!/bin/sh
+
+test -f /home/7korobi/web-env  &&  . /home/7korobi/web-env
+
+APP=giji_meteor
+
+cd /www/$APP
+
+case "$1" in
+run)
+  cd $2
+  ps -f | grep `pwd`/[.] || meteor run &
+  ;;
+esac

@@ -1,4 +1,4 @@
-db.auth('7korobi','kotatsu3');
+db.auth '7korobi', 'kotatsu3'
 
 (->
   check = true

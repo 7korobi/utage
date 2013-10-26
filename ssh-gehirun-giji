@@ -1,0 +1,4 @@
+echo "= JinroGiji:$* "
+
+ssh giji@s11.rs2.gehirn.jp $*
+

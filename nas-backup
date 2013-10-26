@@ -13,12 +13,14 @@ TO=243
 TARGET=giji
 ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/mongo/backup_giji
 
+rm -rf /c/backup/data/*/.AppleDouble
+rmdir /c/backup/data/*
 cd /c/backup/data/
 SRC=/data/mongo/$TARGET
 OLD=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
 date "+${TARGET}-%Y-%m-%d" | xargs mkdir
 NEW=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
-rsync -av -e "ssh -p ${TO}0" --link-dest $OLD/ 192.168.0.$TO:$SRC/ $NEW/
+rsync -av -e "ssh -p ${TO}0" --link-dest $OLD/ 7korobi@192.168.0.$TO:$SRC/ $NEW/
 
 
 for TO in 241 243 251 252 253 254

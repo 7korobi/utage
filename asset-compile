@@ -1,8 +1,7 @@
 
-RUBY="~/.rbenv/bin/rbenv exec ruby "
 APP=/www/giji_rails
 cd $APP
 
-rm -rf $APP/public/assets/*
-rake  assets:precompile
+rake  assets:clobber
+rake  assets:precompile  RAILS_ENV=production
 cp ./public/assets/*.js /www/sow-giji/javascripts/.
