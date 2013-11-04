@@ -14,8 +14,10 @@ db.auth '7korobi', 'kotatsu3'
     db.chr_sets
 
     db.potofs
-    db.events
     db.stories
+
+    db.old_events
+    db.events
   ]
   for model in models
     check &&= model.validate(full:true).valid
