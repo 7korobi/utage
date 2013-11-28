@@ -1,3 +1,3 @@
 echo "use admin"                             > /tmp/log_rotate.js
 coffee -p -b /utage/mongo/log_rotate.coffee >> /tmp/log_rotate.js
-/usr/bin/mongo < /tmp/log_rotate.js 
+/usr/bin/mongo --host mongo.family.jp < /tmp/log_rotate.js 
