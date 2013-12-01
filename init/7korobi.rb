@@ -21,7 +21,7 @@ export SSH_PORT
 export WEB_PORT
 export WSS_PORT
 export RESQUE_PORT
-export RBENV_VERSION=2.0.0-p247
+export RBENV_VERSION=2.0.0-p353
 export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
 
