@@ -17,20 +17,10 @@ rm -rf /c/backup/data/*/.AppleDouble
 rmdir /c/backup/data/*
 cd /c/backup/data/
 SRC=/data/mongo/$TARGET
-OLD=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
+OLD=`ls -dr /c/backup/data/${TARGET}* | head -1`
 date "+${TARGET}-%Y-%m-%d" | xargs mkdir
-NEW=`ls -dtr /c/backup/data/${TARGET}* | tail -1`
+NEW=`ls -dr /c/backup/data/${TARGET}* | head -1`
 rsync -av -e "ssh -p ${TO}0" --link-dest $OLD/ 7korobi@192.168.0.$TO:$SRC/ $NEW/
-
-
-for TO in 241 243 251 252 253 254
-do
-  for DIR in etc var home
-  do
-    ssh -p ${TO}0 root@192.168.0.$TO "cd /$DIR/  && git commit -a -m backup"
-    rsync -r -e "ssh -p ${TO}0" root@192.168.0.$TO:/$DIR/.git/ /c/backup/$DIR/$TO/.git/
-  done
-done
 
 
 TO=252

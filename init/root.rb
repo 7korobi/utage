@@ -38,7 +38,6 @@ _SH_
 open('/etc/hosts','w').puts <<-_SH_
 192.168.0.249  mongo.family.jp
 192.168.0.100  utage.family.jp
-192.168.0.101     tv.family.jp
 183.181.24.203  giji.check.jp
 _SH_
 
