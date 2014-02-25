@@ -3,6 +3,8 @@
 no = ARGV[0][0..2]
 hwaddr = no[1..2]
 
+console = %q|\[\033[1;30m\][\u@| + no + %q|\[\033[32m\] \W\[\033[35m\]$(__git_ps1 ' %s')\[\033[1;30m\]]\$\[\033[00m\] |
+git_path = Dir.glob("/usr/share/doc/git-*/contrib/completion/git-completion.bash").first
 
 open('/home/7korobi/web-env','w').puts <<-_SH_
 echo "no: #{no}  environment set."
@@ -26,6 +28,23 @@ export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
 
 eval "$(rbenv init -)"
+
+source #{git_path}
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWUPSTREAM=auto
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWUPSTREAM=auto
+
+cd (){
+  command cd $1
+  export PS1="#{console}"
+}
+cd .
+
 _SH_
 
 
