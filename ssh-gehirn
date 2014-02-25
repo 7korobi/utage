@@ -1,0 +1,4 @@
+echo "= GEHIRN:$* "
+
+ssh s11.rs2.gehirn.jp $*
+
