@@ -1,9 +1,7 @@
 #! /bin/bash
 
-echo "use giji"                            > /tmp/validate.js
-coffee -p -b /utage/mongo/validate.coffee >> /tmp/validate.js
-
-/usr/bin/mongo --host mongo.family.jp < /tmp/validate.js | 
-  grep false ||
-  /usr/bin/mongodump --journal --forceTableScan  --host mongo.family.jp -u 7korobi -p kotatsu3 -d giji -o /data/mongo/
+/usr/bin/mongo --host mongo.family.jp < /utage/mongo/log_rotate.js
+/usr/bin/mongo --host mongo.family.jp < /utage/mongo/validate.js > /tmp/backup_chk.txt
+grep false /tmp/backup_chk.txt || /utage/mongo/log_rotate
+grep false /tmp/backup_chk.txt || /usr/bin/mongodump --journal --forceTableScan  --host mongo.family.jp -u 7korobi -p kotatsu3 -d giji  -o /data/mongo/
 
