@@ -2,6 +2,14 @@
 APP=/www/giji_rails
 cd $APP
 
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+test "$1" == "" || BRANCH=$1
+
 rake  assets:clobber
 rake  assets:precompile  RAILS_ENV=production
-cp ./public/assets/*.js /www/sow-giji/javascripts/.
+
+rm -rf $APP/public/assets-$BRANCH
+cp -r $APP/public/assets $APP/public/assets-$BRANCH
+test -e /www/sow-giji/assets-$BRANCH || ln -s  $APP/public/assets-$BRANCH /www/sow-giji/assets-$BRANCH
+
+cp -r /Users/7korobi/Dropbox/web_work/images $APP/public/.

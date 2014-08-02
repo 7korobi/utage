@@ -12,6 +12,7 @@ db.auth('7korobi', 'kotatsu3');
     check = db[model].validate({
       full: true
     }).valid;
+    if( 'msg-crazy-53' === model || 'msg-perjury-83' === model ){continue;} 
     checks && (checks = check);
   }
   return checks;

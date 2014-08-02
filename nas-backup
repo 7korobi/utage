@@ -1,32 +1,19 @@
 #! /bin/sh
+# cd /c/media/Album
 
-cd /c/media/Album
-git add .
-git commit -a -m "collection"
+BACKUPDIR=/c/backup
+BACKUPLOG=/c/backup/backup.log
 
-cd /utage/
-git add .
-git commit -a -m "backup"
+test -e "$BACKUPDIR" || mkdir -p $BACKUPDIR
+touch $BACKUPLOG
+chmod 777 $BACKUPLOG
 
-
+echo "`date` backup start" >> $BACKUPLOG
 TO=243
-TARGET=giji
-ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/mongo/backup_giji
+ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/mongo/backup_giji  >>  $BACKUPLOG
+rsync -av -e "ssh -p ${TO}0" --link-dest -r 7korobi@192.168.0.$TO:/data/www/giji_mongo/ $BACKUPDIR/www/giji_mongo/
 
-rm -rf /c/backup/data/*/.AppleDouble
-rmdir /c/backup/data/*
-cd /c/backup/data/
-SRC=/data/mongo/$TARGET
-OLD=`ls -dr /c/backup/data/${TARGET}* | head -1`
-date "+${TARGET}-%Y-%m-%d" | xargs mkdir
-NEW=`ls -dr /c/backup/data/${TARGET}* | head -1`
-rsync -av -e "ssh -p ${TO}0" --link-dest $OLD/ 7korobi@192.168.0.$TO:$SRC/ $NEW/
-
-
-TO=252
-for DIR in giji_rails giji_log giji_socketstream
-do
-    mkdir -p /c/backup/www/$DIR/
-    rsync -r -e "ssh -p ${TO}0" 7korobi@192.168.0.$TO:/www/$DIR/ /c/backup/www/$DIR/
-done
-
+TO=245
+ssh -p ${TO}0 7korobi@192.168.0.$TO /utage/sow/backup_giji    >>  $BACKUPLOG
+rsync -av -e "ssh -p ${TO}0" --link-dest -r 7korobi@192.168.0.$TO:/data/www/ $BACKUPDIR/www/
+echo "`date` backup end" >> $BACKUPLOG

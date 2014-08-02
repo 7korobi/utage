@@ -1,0 +1,10 @@
+#! /bin/sh
+
+BACKUP=/data
+for TARGET in /www/giji_log /www/giji_yaml /www/giji_rails
+do
+  mkdir -p $BACKUP/$TARGET
+  /usr/bin/rdiff-backup  $TARGET $BACKUP/$TARGET
+done
+
+

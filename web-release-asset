@@ -1,8 +1,6 @@
 RUBY="/home/7korobi/.rbenv/bin/rbenv exec ruby "
 APP=/www/giji_rails
 
-cp -r /Users/7korobi/Dropbox/web_work/images $APP/public
-
 /utage/web-push-gehirn $APP/public --delete
 
 /utage/web-push-serversman-giji /utage &

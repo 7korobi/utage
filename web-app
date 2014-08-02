@@ -35,8 +35,8 @@ ruby-install)
   cd ~/.rbenv/plugins/ruby-build/
   git pull
   cd /www/$APP
-  rbenv install 2.0.0-p353
-  rbenv shell 2.0.0-p353
+  rbenv install 2.1.2
+  rbenv shell 2.1.2
   gem install bundler
   rbenv exec bundle install
   ;;
@@ -58,9 +58,9 @@ resque)
   ;;
 
 QUEUE)
-  rm .ruby-version 
-  export RBENV_VERSION=2.1.0
-  export LIST=giji_rsyncs,giji_schedules,giji_vils,giji_errors
+  rm .ruby-version
+  export RBENV_VERSION=2.1.2
+  export LIST=giji_rsyncs,giji_schedules,giji_vils,giji_freeze,giji_errors
   $0 kill TERM "rake resque:"
   $0 kill QUIT "Waiting for $LIST"
 

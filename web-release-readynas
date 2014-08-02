@@ -1,4 +1,5 @@
 APP=/www/giji_rails
 
 /utage/web-push-readynas /utage  --delete
+/utage/ssh-readynas cp /utage/readynas/min/* /c/media/dirlist/.
 

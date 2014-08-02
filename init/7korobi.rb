@@ -3,7 +3,7 @@
 no = ARGV[0][0..2]
 hwaddr = no[1..2]
 
-console = %q|\[\033[1;30m\][\u@| + no + %q|\[\033[32m\] \W\[\033[35m\]$(__git_ps1 ' %s')\[\033[1;30m\]]\$\[\033[00m\] |
+console = %q|\[\033[1;30m\][\u@\[\033[1;37m\]| + no + %q|\[\033[32m\] \W\[\033[35m\]$(__git_ps1 ' %s')\[\033[1;30m\]]\$\[\033[00m\] |
 git_path = Dir.glob("/usr/share/doc/git-*/contrib/completion/git-completion.bash").first
 
 open('/home/7korobi/web-env','w').puts <<-_SH_
@@ -23,13 +23,20 @@ export SSH_PORT
 export WEB_PORT
 export WSS_PORT
 export RESQUE_PORT
-export RBENV_VERSION=2.0.0-p353
+export RBENV_VERSION=2.1.2
 export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
 
 eval "$(rbenv init -)"
 
+alias dstat-full='~/dstat/dstat -Tclmdrn'
+alias dstat-mem='~/dstat/dstat -Tclm'
+alias dstat-cpu='~/dstat/dstat -Tclr'
+alias dstat-net='~/dstat/dstat -Tclnd'
+alias dstat-disk='~/dstat/dstat -Tcldr'
+
 source #{git_path}
+source /home/7korobi/git-prompt.sh
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUNTRACKEDFILES=true
