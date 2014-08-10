@@ -22,6 +22,7 @@ handbrake_format = %w[
     -f mp4 -4
     --verbose=1
     --pfr --detelecine --decomb
+    --crop 0:0:0:0 
     --encopts level=4.2:ref=6:weightp=1:subq=2:rc-lookahead=10:trellis=2:8x8dct=0:bframes=5:b-adapt=2
     -e x264 -q 23 -r 60
     -N jpn -E ffac3  -6 5point1 -R Auto -B 256 -D 2.0
@@ -120,6 +121,7 @@ puts "===   to : #{PATH[:QTIME]}"
 
 
 puts "### copy to local-store release camera OK. ###"
+
 puts "### encode movie files by HandBrakeCLI. ###"
 execute_for_file(PATH[:STORE], handbrake_format.join(" ")) do |name|
   target_postfix = name.gsub(PATH[:STORE], "")
