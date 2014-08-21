@@ -1,2 +1,5 @@
 cd /www/giji_assets
-rake assets:clobber && rake assets:precompile && web-push-gehirn /www/giji_assets/public
+rake assets:clobber || exit 0
+rake assets:precompile || exit 0
+
+web-push-gehirn /www/giji_assets/public
