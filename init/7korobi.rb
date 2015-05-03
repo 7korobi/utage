@@ -26,6 +26,7 @@ export RESQUE_PORT
 export RBENV_VERSION=2.1.2
 export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
+export MECAB_PATH=/usr/lib64/libmecab.so.2
 
 eval "$(rbenv init -)"
 

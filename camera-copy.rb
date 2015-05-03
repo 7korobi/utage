@@ -5,9 +5,10 @@ PATH = {
   QTIME:   "/Users/7korobi/Movies/QUICK",
   NAS_QT:  "/Volumes/media/Album/Videos/QUICK",
 
-  CAM_JPG: "/Volumes/*/DCIM/*MSDCF",
+  CAM_JPG: "/Volumes/*/DCIM/*",
   PHOTO:   "/Users/7korobi/Pictures/CAMERA",
 
+  ARDRONE: "/Volumes/*/media_*",
   CAMERA:  "/Volumes/*/AVCHD/*/STREAM",
   STORE:   "/Users/7korobi/Movies/AVCHD",
   NAS_SRC: "/Volumes/media/Album/Videos/AVCHD",
@@ -48,21 +49,23 @@ def execute_for_file(src_path, format, match = "/**/*.*")
 end
 
 COMMENTS = {}
-def comment(item)
+def comment(name, item)
   datestamp = item.mtime.strftime("%Y-%m-%d")
   COMMENTS[datestamp] ||= begin
     since_birth = item.mtime - Time.new(2013,6,24,5)
     time_of_day = 1 * 24*60*60
 
     puts "### input comment at #{datestamp} ( = #{(since_birth/time_of_day).ceil} days.) ###"
+    `open "#{name}"`
     gets.chomp
   end
 end
 
-
-
-system "find #{PATH[:NAS_SRC]} -type d | grep -v AppleDouble | sort"
-
+dirs = []
+dirs += `cd #{PATH[:IPAD_CP]} && find . -type d | grep -v AppleDouble`.split("¥n")
+dirs += `cd #{PATH[:QTIME  ]} && find . -type d | grep -v AppleDouble`.split("¥n")
+dirs += `cd #{PATH[:STORE  ]} && find . -type d | grep -v AppleDouble`.split("¥n")
+puts dirs.uniq.sort
 
 
 execute_for_file(PATH[:CAM_JPG], "mv -f %s %s") do |name|
@@ -70,33 +73,41 @@ execute_for_file(PATH[:CAM_JPG], "mv -f %s %s") do |name|
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:PHOTO]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:PHOTO]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
 execute_for_file(PATH[:IPAD_CP], "mv -f %s %s", "/**/*.jpg") do |name|
   item = File::Stat.new(name)
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:PHOTO]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:PHOTO]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
 execute_for_file(PATH[:IPAD_CP], "mv -f %s %s", "/**/*.JPG") do |name|
   item = File::Stat.new(name)
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:PHOTO]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:PHOTO]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
 puts "=== from : #{PATH[:CAM_JPG]}"
 puts "=== from : #{PATH[:IPAD_CP]}"
 puts "===   to : #{PATH[:PHOTO]}"
 
+execute_for_file(PATH[:ARDRONE], "mv -f %s %s") do |name|
+  item = File::Stat.new(name)
+  timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
+  ext = name.split(".")[-1]
+
+  "#{PATH[:STORE]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
+end
 execute_for_file(PATH[:CAMERA], "mv -f %s %s") do |name|
   item = File::Stat.new(name)
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:STORE]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:STORE]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
+puts "=== from : #{PATH[:ARDRONE]}"
 puts "=== from : #{PATH[:CAMERA]}"
 puts "===   to : #{PATH[:STORE]}"
 
@@ -105,14 +116,14 @@ execute_for_file(PATH[:IPAD_CP], "mv -f %s %s", "/**/*.mov") do |name|
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:QTIME]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:QTIME]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
 execute_for_file(PATH[:IPAD_CP], "mv -f %s %s", "/**/*.MOV") do |name|
   item = File::Stat.new(name)
   timestamp = item.mtime.strftime("%Y-%m-%d.%H.%M.%S")
   ext = name.split(".")[-1]
 
-  "#{PATH[:QTIME]}/#{comment(item)}/#{timestamp}_.#{ext}"
+  "#{PATH[:QTIME]}/#{comment(name, item)}/#{timestamp}_.#{ext}"
 end
 puts "=== from : #{PATH[:IPAD_CP]}"
 puts "===   to : #{PATH[:QTIME]}"

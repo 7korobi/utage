@@ -5,15 +5,15 @@
 # ssh-readynas  /utage/git-log-graph /etc
 
 echo "-----------------------------------------------------------------------------"
-for TARGET in www/giji_rails www/giji_log www/giji_yaml
+for TARGET in www/giji_log www/giji_yaml
 do
-  ssh-245 rdiff-backup --list-increment-sizes /data/$TARGET
+  ssh-245 rdiff-backup --list-increment-sizes /data/$TARGET/.
   echo "-------------------------------------------( $TARGET )----------------"
 done
 TO=243
 for TARGET in www/giji_mongo
 do
-  ssh-243 rdiff-backup --list-increment-sizes /data/$TARGET
+  ssh-243 rdiff-backup --list-increment-sizes /data/$TARGET/.
   echo "-------------------------------------------( $TARGET )----------------"
 done
 
