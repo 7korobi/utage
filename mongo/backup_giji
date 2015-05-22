@@ -4,6 +4,6 @@
 /usr/bin/mongo --host mongo.family.jp < /utage/mongo/validate.js > /tmp/backup_chk.txt
 grep false /tmp/backup_chk.txt || /utage/mongo/log_rotate
 grep false /tmp/backup_chk.txt || rm /data/mongo/giji/*
-grep false /tmp/backup_chk.txt || /usr/bin/mongodump --journal --forceTableScan  --host mongo.family.jp -u 7korobi -p kotatsu3 -d giji  -o /data/mongo/
+grep false /tmp/backup_chk.txt || /usr/bin/mongodump --forceTableScan  --host mongo.family.jp -u 7korobi -p kotatsu3 -d giji  -o /data/mongo/
 grep false /tmp/backup_chk.txt || /usr/bin/rdiff-backup   /data/mongo/giji /data/www/giji_mongo
 

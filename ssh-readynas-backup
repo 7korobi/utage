@@ -1,0 +1,3 @@
+echo "= nas:$* "
+ssh -p 1510 utage.family.jp $*
+
