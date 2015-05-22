@@ -1,0 +1,4 @@
+# Logfile created on 2015-05-22 14:14:18 +0900 by logger.rb/47272
+Overwriting existing field _id in class Face.
+Overwriting existing field _id in class ChrSet.
+Overwriting existing field _id in class User.
