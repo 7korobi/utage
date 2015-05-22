@@ -3,7 +3,8 @@
 
 class Media::Movie < Media::Handbrake
   def self.glob
-    Dir.glob("{D,F}://UTAGE-MEDIA/BitTorrent/**/*" + Media::Handbrake::MOVIE).map{|o| new(o) } 
+    globbed = Dir.glob("{D,F}://UTAGE-MEDIA/BitTorrent/**/*" + Media::Handbrake::MOVIE)
+    track_scan(globbed)
   end
 
   def initialize(src)

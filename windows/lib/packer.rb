@@ -33,7 +33,6 @@ class Packer
     log.puts cmd
     o, e, s = Open3.capture3 cmd
     puts cmd
-    puts e
     p s
     puts o
   end
@@ -49,6 +48,7 @@ class Packer
           do_exec f, item.do_encode + " || " + item.do_reject 
         rescue Interrupt => e
           do_exec f, item.do_reject 
+          raise e
         end
       end
     end
