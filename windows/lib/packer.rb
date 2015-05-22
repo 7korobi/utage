@@ -31,8 +31,8 @@ class Packer
   def do_exec(log, cmd)
     return unless cmd
     log.puts cmd
-    o, e, s = Open3.capture3 cmd
     puts cmd
+    o, e, s = Open3.capture3 cmd
     p s
     puts o
   end
