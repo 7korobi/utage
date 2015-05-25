@@ -46,23 +46,18 @@ class Media::Handbrake < Media::Base
   def initialize(src, lang, title, size, audio, subtitle = nil)
     case size
     when :HD
-      # @codec = %Q|-q 25 -e qsv_h264 --h264-level="4.2" --h264-profile=high -x target-usage=1:gop-ref-dist=4:gop-pic-size=32:async-depth=4|
-      @codec = %Q|-q 25 -e x264 --h264-level="4.2" --h264-profile=high --pfr --detelecine --decomb --encopts ref=6:weightp=1:subq=2:rc-lookahead=10:trellis=2:8x8dct=0:bframes=5:b-adapt=2|
-      @audio = %Q|-E av_aac -6 5point1 -R Auto -B 256 --audio-copy-mask aac|
+      initialize_hd
     when :SD
-      @codec = %Q|-q 28 -e x265 --h264-level="4.2"|
-      @audio = %Q|-E av_aac -6 dpl2 -R Auto -B 64 -D 0 --gain 0|
+      initialize_sd
     end
 
     @ext  = %Q|--markers --title #{title} --audio #{audio}|
     @ext += %Q| --subtitle #{subtitle} --subtitle-burned| if subtitle
-
-    @src = src
-    path = @src[/^.*\/iso/]
-    media_path @src.gsub(path,"").gsub(/.ISO$/, "") + "#{lang}.mp4"
+    @src  = src
 
     # @target = %Q|//utage.family.jp/media/iPad/Videos/[映画] BD-src/#{paths[-1]}|
-    puts "    [#{lang}] found #{size}.  #{@ext} "
+    media_path out_path + "#{lang}.mp4"
+    puts "    found #{size}#{lang}.  #{@ext} "
   end
 
   def do_deploy
