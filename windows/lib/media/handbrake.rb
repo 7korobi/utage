@@ -4,7 +4,7 @@
 class Media::Handbrake < Media::Base
   CLI = "C://Program Files/Handbrake/HandBrakeCLI.exe"
 
-  MOVIE = ".{AVI,WMV,MKV,MP4,M4V,F4V,TS,MTS,3GP}"
+  MOVIE = ".{AVI,WMV,MKV,MOV,MP4,M4V,F4V,TS,MTS,3GP}"
 
   def self.track_scan(globbed)
     list = []
@@ -12,8 +12,7 @@ class Media::Handbrake < Media::Base
       cmd = %Q|#{Media::Handbrake::CLI.path} -i #{src.path} --main-feature --scan|
       puts "scan... #{src}"
       o, e, s = Open3.capture3 cmd
-
-      main = e.scrub.split(/\+ title /).find{|s| s[/  \+ Main Feature/] }
+      main = e.scrub.split(/\+ title /i).find{|s| s[/  \+ Main Feature|^1\:/] }
       video, audio, subtitle = main.split(/  \+ audio tracks:\n|  \+ subtitle tracks:\n/)
       title = main[/^\d+:/].to_i
       __, width, height = video.match(/  \+ size: (\d+)x(\d+)/).to_a.map(&:to_i)
@@ -24,10 +23,11 @@ class Media::Handbrake < Media::Base
       end
 
       ja = ""
-      en = "-en"
+      en = ""
       begin
         subtitle = subtitle.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
         eng_audio = audio.split("\n").grep(/English/)[0].match(/\+ (\d+)/)[1].to_i
+        en = "-en"
         list.push new(src, en, title, size, eng_audio, subtitle)
         ja = "-ja"
       rescue StandardError => e
@@ -37,7 +37,12 @@ class Media::Handbrake < Media::Base
         jpn_audio = audio.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
         list.push new(src, ja, title, size, jpn_audio)
       rescue StandardError => e
-        puts "    not find Japanese audio"
+        if "" == en
+          jpn_audio = audio.split("\n")[0].match(/\+ (\d+)/)[1].to_i
+          list.push new(src, ja, title, size, jpn_audio)
+        else
+          puts "    not find Japanese audio"
+        end
       end
     end
     list    
