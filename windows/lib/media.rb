@@ -2,6 +2,7 @@
 # set RUBYOPT=-EUTF-8
 
 require "./lib/media/base"
+require "./lib/media/picture"
 require "./lib/media/handbrake"
 require "./lib/media/bdmv"
 require "./lib/media/album"
