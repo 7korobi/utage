@@ -9,11 +9,6 @@ class Packer
   COPY = ".{mp3,jpg,jpeg,png,zip}"
   ARC = ".{lzh,rar}"
 
-  STAMP = Time.now.strftime("%Y-%m-%d.%H")
-  WORK_DIR = "C://MEDIA/WORK"
-  DEPLOY_LOG = "D://MEDIA/BitTorrent/bat/#{STAMP}-encode.bat"
-  RELEASE_LOG = "D://MEDIA/BitTorrent/bat/#{STAMP}-release.bat"
-
   def initialize
     @sources  = []
     @deploys  = []
@@ -38,23 +33,31 @@ class Packer
   end
 
   def exec
-    open(DEPLOY_LOG, "w") do |f|
+    open(ENV.deploy_log, "w") do |f|
       @sources.map {|item| item.do_deploy }.compact.uniq.sort.each do |cmd|
         do_exec f, cmd
       end
 
+      @releases = []
       @sources.each do |item|
         begin
-          do_exec f, item.do_encode + " || " + item.do_reject 
+          cmd = item.do_encode
+          if cmd
+            if do_exec(f, cmd + " || " + item.do_reject).success?
+              @releases.push item.do_release
+            end
+          else
+            @releases.push item.do_release
+          end
         rescue Interrupt => e
-          do_exec f, item.do_reject 
+          do_exec f, item.do_reject
           raise e
         end
       end
     end
-    open(RELEASE_LOG, "w") do |f|
-      @sources.map {|item| item.do_release }.compact.uniq.sort.each do |cmd|
-        do_exec f, item.do_reject 
+    open(ENV.release_log, "w") do |f|
+      @releases.compact.uniq.sort.each do |cmd|
+        do_exec f, cmd
       end
     end
   end

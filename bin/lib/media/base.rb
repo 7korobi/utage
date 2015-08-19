@@ -4,7 +4,7 @@
 module Media
   class Base
     BADWORDS = %w[
-      FLSNOW RBF QTS LxyLab Lxy Lab A.A ANK-raws Kuroi-raws
+      FLSNOW RBF QTS LxyLab Lxy Lab A.A ReinForce ANK-raws Kuroi-raws Yousei-raws
       JPN
       720P 1080P TrueHD
       720x960 960x720 1080x1448 1080x1920 1440x1080 1448x1080 1920x816 1920x1080
@@ -34,8 +34,8 @@ module Media
 
     def media_path(fname)
       paths = fname.split("/").reject {|str| [nil, ""].member? str }
-      @work = ([Packer::WORK_DIR] + paths[0..-1]).join("/")
-      @dir  = ([Packer::WORK_DIR] + paths[0..-2]).join("/") if paths.size > 1
+      @work = ([ENV.work_dir] + paths[0..-1]).join("/")
+      @dir  = ([ENV.work_dir] + paths[0..-2]).join("/") if paths.size > 1
     end
 
     def do_deploy
@@ -47,7 +47,7 @@ module Media
     end
 
     def do_reject
-      raise "not implement"
+      %Q|#{ENV.do_del} #{@work.path}|
     end
 
     def do_encode

@@ -2,17 +2,18 @@
 # set RUBYOPT=-EUTF-8
 
 class Media::Handbrake < Media::Base
-  CLI = "C://Program Files/Handbrake/HandBrakeCLI.exe"
-
-  MOVIE = ".{AVI,WMV,MKV,MOV,MP4,M4V,F4V,TS,MTS,3GP}"
+  MOVIE = ".{AVI,WMV,MKV,MOV,MP4,M4V,F4V,TS,MTS,3GP,FLV}"
 
   def self.track_scan(globbed)
     list = []
-    globbed.each do |src| 
-      cmd = %Q|#{Media::Handbrake::CLI.path} -i #{src.path} --main-feature --scan|
+    globbed.each do |src|
+      cmd = %Q|#{ENV.cli.path} -i #{src.path} --main-feature --scan|
       puts "scan... #{src}"
       o, e, s = Open3.capture3 cmd
-      main = e.scrub.split(/\+ title /i).find{|s| s[/  \+ Main Feature|^1\:/] }
+      titles = e.scrub.split(/\+ title /i)
+      main = titles.find{|s| s[/  \+ Main Feature/] } || titles.find{|s| s[/^1\:/] }
+      next unless main
+
       video, audio, subtitle = main.split(/  \+ audio tracks:\n|  \+ subtitle tracks:\n/)
       title = main[/^\d+:/].to_i
       __, width, height = video.match(/  \+ size: (\d+)x(\d+)/).to_a.map(&:to_i)
@@ -24,20 +25,28 @@ class Media::Handbrake < Media::Base
 
       ja = ""
       en = ""
+      ch = ""
       begin
-        subtitle = subtitle.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
-        eng_audio = audio.split("\n").grep(/English/)[0].match(/\+ (\d+)/)[1].to_i
-        en = "-en"
-        list.push new(src, en, title, size, eng_audio, subtitle)
+        jpn_subtitle = subtitle.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
+        chi_audio = audio.split("\n").grep(/Chinese/)[0].match(/\+ (\d+)/)[1].to_i
+        ch = "-ch"
+        list.push new(src, ch, title, size, chi_audio, jpn_subtitle)
         ja = "-ja"
       rescue StandardError => e
-        puts "    not find English audio or Japanese subs"
+      end
+      begin
+        jpn_subtitle = subtitle.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
+        eng_audio = audio.split("\n").grep(/English/)[0].match(/\+ (\d+)/)[1].to_i
+        en = "-en"
+        list.push new(src, en, title, size, eng_audio, jpn_subtitle)
+        ja = "-ja"
+      rescue StandardError => e
       end
       begin
         jpn_audio = audio.split("\n").grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
         list.push new(src, ja, title, size, jpn_audio)
       rescue StandardError => e
-        if "" == en
+        if "" == en && "" == ch
           jpn_audio = audio.split("\n")[0].match(/\+ (\d+)/)[1].to_i
           list.push new(src, ja, title, size, jpn_audio)
         else
@@ -45,7 +54,7 @@ class Media::Handbrake < Media::Base
         end
       end
     end
-    list    
+    list
   end
 
   def initialize(src, lang, title, size, audio, subtitle = nil)
@@ -67,7 +76,7 @@ class Media::Handbrake < Media::Base
 
   def do_deploy
     if @dir
-      %Q|MKDIR #{@dir.path}|
+      %Q|mkdir #{@dir.path}|
     end
   end
 
@@ -75,18 +84,13 @@ class Media::Handbrake < Media::Base
     nil
   end
 
-  def do_reject
-    %Q|DEL #{@work.path}|
-  end
-
   def do_encode
     format  = %Q|-P -f mp4 -4 --vfr --loose-anamorphic --modulus 4|
 
     if File.exists?(@work)
-      %Q||
+      nil
     else
-      %Q|#{CLI.path} -i #{@src.path} -o #{@work.path} #{@ext} #{format} #{@audio} #{@codec} --verbose=1|
+      %Q|#{ENV.cli.path} -i #{@src.path} -o #{@work.path} #{@ext} #{format} #{@audio} #{@codec} --verbose=1|
     end
   end
 end
-

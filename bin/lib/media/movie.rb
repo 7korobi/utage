@@ -5,12 +5,12 @@ require "open3"
 
 class Media::Movie < Media::Handbrake
   def self.glob
-    globbed = Dir.glob("D://MEDIA/BitTorrent/**/*" + Media::Handbrake::MOVIE)
-    track_scan(globbed)
+    globbed = Dir.glob(scan_path + "/*" + Media::Handbrake::MOVIE)
+    track_scan globbed
   end
 
   def out_path
-    @src.gsub(@src[/^.*\/BitTorrent/],"").split("/").map{|str| Media::Base.filter str }.join("/")
+    @src.gsub(head_path,"").split("/").map{|str| Media::Base.filter str }.join("/")
   end
 
   def initialize_sd

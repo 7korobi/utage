@@ -165,7 +165,6 @@ puts "=== from : #{PATH[:QTIME]}"
 puts "===   to : #{PATH[:ENCODE]}"
 
 
-
 puts "### copy to nas-strage. ###"
 execute_for_file(PATH[:PHOTO], "mv -f %s %s") do |name|
   target_postfix = name.gsub(PATH[:PHOTO], "")

@@ -5,13 +5,12 @@ require "open3"
 
 class Media::BDMV < Media::Handbrake
   def self.glob
-    globbed = Dir.glob("F://**/BDMV/index.bdmv").map {|s| s.gsub("/BDMV/index.bdmv","") }
-    # globbed += Dir.glob("F://iso/**/*.ISO")
-    track_scan globbed.reverse
+    globbed = Dir.glob(scan_path + "/BDMV/index.bdmv").map {|s| s.gsub("/BDMV/index.bdmv","") }
+    track_scan globbed
   end
 
   def out_path
-    @src.gsub(@src[/^.*\/iso/],"").gsub(/.ISO$/, "")
+    @src.gsub(head_path,"").split("/").map{|str| Media::Base.filter str }.join("/")
   end
 
   def initialize_sd
