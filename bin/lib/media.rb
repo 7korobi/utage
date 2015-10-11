@@ -23,7 +23,7 @@ def ENV.win
 end
 
 def ENV.mac
-  ENV.cli = "/bin/HandBrakeCLI"
+  ENV.cli = "/www/bin/HandBrakeCLI"
   ENV.work_dir = ""
   ENV.deploy_log = "/tmp/#{STAMP}-encode.bat"
   ENV.release_log = "/tmp/#{STAMP}-release.bat"

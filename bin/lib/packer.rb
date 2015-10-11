@@ -30,6 +30,7 @@ class Packer
     o, e, s = Open3.capture3 cmd
     p s
     puts e
+    s
   end
 
   def exec

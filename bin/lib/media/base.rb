@@ -4,7 +4,7 @@
 module Media
   class Base
     BADWORDS = %w[
-      FLSNOW RBF QTS LxyLab Lxy Lab A.A ReinForce ANK-raws Kuroi-raws Yousei-raws
+      FLSNOW RBF QTS LxyLab Lxy Lab A.A ReinForce ANK-raws Kuroi-raws Yousei-raws HorribleSubs philosophy-raws
       JPN
       720P 1080P TrueHD
       720x960 960x720 1080x1448 1080x1920 1440x1080 1448x1080 1920x816 1920x1080
