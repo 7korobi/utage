@@ -4,6 +4,15 @@
 TAGS = {}
 
 module Media::Album
+  def move_temp(src_dir)
+    tmp = ENV.tmp_dir + "/"
+    Dir.glob(src_dir).each do |src|
+      puts "   ... copy by #{src.path}"
+      `mv #{src.path} #{tmp.path}`
+      File.utime(tmp, File.mtime(src))
+    end
+  end
+
   def tag(mtime)
     datestamp = mtime.strftime("%Y-%m-%d")
 
@@ -28,11 +37,7 @@ end
 class Media::AlbumPhoto < Media::Copy
   include Media::Album
   def self.glob
-    tmp = ENV.tmp_dir + "/"
-    Dir.glob(scan_path + "/*" + Media::Copy::PICTURE).each do |src|
-      puts "   ... copy by #{src.path}"
-      `mv #{src.path} #{tmp.path}`
-    end
+    move_temp(scan_path + "/*" + Media::Copy::PICTURE)
     globbed = Dir.glob(ENV.tmp_dir + "/**/*" + Media::Copy::PICTURE)
     photo_scan globbed
   end
@@ -57,11 +62,7 @@ end
 class Media::AlbumMovie < Media::Handbrake
   include Media::Album
   def self.glob
-    tmp = ENV.tmp_dir + "/"
-    Dir.glob(scan_path + "/*" + Media::Handbrake::MOVIE).each do |src|
-      puts "   ... copy by #{src.path}"
-      `mv #{src.path} #{tmp.path}`
-    end
+    move_temp(scan_path + "/*" + Media::Handbrake::MOVIE)
     globbed = Dir.glob(ENV.tmp_dir + "/**/*" + Media::Handbrake::MOVIE)
     track_scan globbed
   end
