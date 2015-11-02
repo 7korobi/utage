@@ -3,16 +3,17 @@
 
 TAGS = {}
 
-module Media::Album
-  def move_temp(src_dir)
-    tmp = ENV.tmp_dir + "/"
-    Dir.glob(src_dir).each do |src|
-      puts "   ... copy by #{src.path}"
-      `mv #{src.path} #{tmp.path}`
-      File.utime(tmp, File.mtime(src))
-    end
+def move_temp(src_dir)
+  tmp = ENV.tmp_dir + "/"
+  Dir.glob(src_dir).each do |src|
+    puts "   ... copy by #{src.path}"
+    time = File.mtime src
+    `mv #{src.path} #{tmp.path}`
+    File.utime time, time, tmp
   end
+end
 
+module Media::Album
   def tag(mtime)
     datestamp = mtime.strftime("%Y-%m-%d")
 
