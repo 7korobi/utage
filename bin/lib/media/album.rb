@@ -70,11 +70,11 @@ class Media::AlbumMovie < Media::Handbrake
 
   def initialize_sd
     @codec = %Q|-q 28 --detelecine -e x265 --h264-level="4.2"|
-    @audio = %Q|-E av_aac -6 dpl2 -R Auto -B 64 -D 0 --gain 0|
+    @audio = %Q|-E ca_aac -6 dpl2 -R Auto -B 64 -D 0 --gain 0|
   end
 
   def initialize_hd
     @codec = %Q|-q 23 -e x264 --h264-level="4.2" --h264-profile=high --vfr --encopts ref=6:weightp=1:subq=2:rc-lookahead=10:trellis=2:8x8dct=0:bframes=5:b-adapt=2|
-    @audio = %Q|-E av_aac -6 5point1 -R Auto -B 256 --audio-copy-mask aac|
+    @audio = %Q|-E ca_aac -6 5point1 -R Auto -B 256 --audio-copy-mask aac|
   end
 end

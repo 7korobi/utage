@@ -2,7 +2,7 @@
 # set RUBYOPT=-EUTF-8
 
 class Media::Handbrake < Media::Base
-  MOVIE = ".{AVI,WMV,MKV,MOV,MP4,M4V,F4V,TS,MTS,3GP,FLV,ISO}"
+  MOVIE = ".{AVI,WMV,MKV,MOV,MP4,M4V,F4V,TS,MTS,M2TS,3GP,FLV,ISO}"
 
   def self.track_scan(globbed)
     list = []
