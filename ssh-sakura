@@ -1,0 +1,2 @@
+echo "= sakura-vps:$* "
+ssh 7korobi@ik1-315-17953.vs.sakura.ne.jp $*
