@@ -11,7 +11,7 @@ puts Dir.glob(glob).map{|o| o.gsub(head,"").chop }.uniq.sort
 
 class Media::AlbumMovie
   def self.scan_path
-    "E:/AVCHD/*/STREAM/**"
+    "S:/AVCHD/*/STREAM/**"
   end
   def head_path
     @src[/^.*\/STREAM/]
@@ -20,7 +20,7 @@ end
 
 class Media::AlbumPhoto
   def self.scan_path
-    "E:/DCIM/**"
+    "F:/DCIM/**"
   end
   def head_path
     @src[/^.*\/DCIM/]
@@ -29,12 +29,12 @@ end
 
 pack = Packer.new
 
-ENV.tmp_dir  = "C:/MEDIA/PIC"
+ENV.tmp_dir  = "S:/MEDIA/PIC"
 ENV.work_dir = "Z:/Album/Photo"
 pack.add Media::AlbumPhoto.glob
 
-ENV.tmp_dir  = "C:/MEDIA/MOV/AVCHD"
-ENV.work_dir = "C:/MEDIA/MOV/HandBrake"
+ENV.tmp_dir  = "S:/MEDIA/MOV/AVCHD"
+ENV.work_dir = "S:/MEDIA/MOV/HandBrake"
 pack.add Media::AlbumMovie.glob
 
 ENV.work_dir = "Z:/Album/Videos/AVCHD"

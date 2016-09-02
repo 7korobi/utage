@@ -6,7 +6,7 @@ ENV.win
 
 class Media::Base
   def self.scan_path
-    "D://MEDIA/BD/Video/**"
+    "S://MEDIA/BD/Video/**"
   end
   def head_path
     @src[/^.*\/Video/]

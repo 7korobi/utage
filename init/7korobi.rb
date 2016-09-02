@@ -22,7 +22,7 @@ export SSH_PORT
 export WEB_PORT
 export WSS_PORT
 export RESQUE_PORT
-export RBENV_VERSION=2.2.2
+export RBENV_VERSION=2.3.1
 export MONGO_URL="mongodb://7korobi:kotatsu3@mongo.family.jp/giji"
 export REDIS_URL="redis://mongo.family.jp:6379/0"
 export MECAB_PATH=/usr/lib64/libmecab.so.2

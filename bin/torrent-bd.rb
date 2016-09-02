@@ -6,16 +6,16 @@ ENV.win
 
 class Media::Base
   def self.scan_path
-    "S://MEDIA/BitTorrent/**"
+    "S://MEDIA/BitTorrent-BD/**"
   end
   def head_path
-    @src[/^.*\/BitTorrent/]
+    @src[/^.*\/BitTorrent-BD/]
   end
 end
 
 
 pack = Packer.new
-pack.add Media::Movie.glob
+pack.add Media::BDMV.glob 
 pack.encode
 pack.exec
 
