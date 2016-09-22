@@ -11,7 +11,7 @@ require "./lib/media/movie"
 STAMP = Time.now.strftime("%Y-%m-%d.%H")
 ENV = Struct.new(:cli, :tmp_dir, :work_dir, :deploy_log, :release_log, :do_del).new
 def ENV.win
-  ENV.cli = "C://Dropbox/bin/HandBrakeCLI.exe"
+  ENV.cli = "C://Dropbox/bin/HandBrakeCLI.old.exe"
   ENV.work_dir = "S://MEDIA/WORK"
   ENV.deploy_log = "S://MEDIA/BitTorrent/bat/#{STAMP}-encode.bat"
   ENV.release_log = "S://MEDIA/BitTorrent/bat/#{STAMP}-release.bat"
