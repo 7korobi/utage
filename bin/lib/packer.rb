@@ -28,7 +28,6 @@ class Packer
     log.puts cmd
     puts cmd
     o, e, s = Open3.capture3 cmd
-    p s
     puts e
     s
   end

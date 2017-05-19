@@ -4,14 +4,17 @@
 require "./lib/media/base"
 require "./lib/media/copy"
 require "./lib/media/handbrake"
+
 require "./lib/media/bdmv"
 require "./lib/media/album"
 require "./lib/media/movie"
+require "./lib/media/hevc"
+
 
 STAMP = Time.now.strftime("%Y-%m-%d.%H")
 ENV = Struct.new(:cli, :tmp_dir, :work_dir, :deploy_log, :release_log, :do_del).new
 def ENV.win
-  ENV.cli = "C://Dropbox/bin/HandBrakeCLI.old.exe"
+  ENV.cli = "C://Dropbox/bin/HandBrakeCLI.exe"
   ENV.work_dir = "S://MEDIA/WORK"
   ENV.deploy_log = "S://MEDIA/BitTorrent/bat/#{STAMP}-encode.bat"
   ENV.release_log = "S://MEDIA/BitTorrent/bat/#{STAMP}-release.bat"

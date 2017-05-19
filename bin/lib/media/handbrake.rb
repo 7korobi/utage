@@ -74,6 +74,10 @@ class Media::Handbrake < Media::Base
     puts "    found #{size}#{lang}.  #{@ext} "
   end
 
+  def format
+    %Q|-P -f mp4 -4 --vfr --loose-anamorphic --modulus 4|
+  end
+
   def do_deploy
     if @dir
       %Q|mkdir #{@dir.path}|
@@ -85,8 +89,6 @@ class Media::Handbrake < Media::Base
   end
 
   def do_encode
-    format  = %Q|-P -f mp4 -4 --vfr --loose-anamorphic --modulus 4|
-
     if File.exists?(@work)
       nil
     else
