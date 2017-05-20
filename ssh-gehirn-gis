@@ -1,4 +1,0 @@
-echo "= GEHIRN:$* "
-
-ssh -p 22326 7korobi@197c86d9-9534-4b76-a81c-56cf04279536.gehirn.ne.jp $*
-
