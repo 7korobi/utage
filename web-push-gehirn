@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo "no: GEHIRN  to: $1  option: $2 $3 $4 $5"
-
-TO=$1
-
-rsync -r ${TO}/ 7korobi@s11.rs2.gehirn.jp:/home/7korobi/public_html/ --exclude='stories' --exclude='*.svn-base' --exclude='*.svn' --exclude='*.bak' $2 $3 $4 $5
-

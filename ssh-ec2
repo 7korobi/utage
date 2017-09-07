@@ -1,1 +1,0 @@
-ssh -i /www/ec2-user/giji.pem ec2-user@${EC2_URL} $*

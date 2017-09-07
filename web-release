@@ -1,8 +1,0 @@
-#!/bin/sh
-
-/utage/web-cleanup
-/utage/web-release-front reload &
-/utage/web-release-front resque &
-/utage/web-release-worker QUEUE &
-
-
