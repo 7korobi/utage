@@ -36,7 +36,7 @@ class Media::HEVC < Media::Handbrake
       all_subs = subtitle.split("\n")
       begin
         subtitles.push all_subs.grep(/Japanese/)[0].match(/\+ (\d+)/)[1].to_i
-        audios.push    all_audios.grep(/Chinese/)[0].match(/\+ (\d+)/)[1].to_i
+        audios.push    all_audios.grep(/Chinese|中文/)[0].match(/\+ (\d+)/)[1].to_i
         langs.push     "ch"
         invalid = false
       rescue StandardError => e

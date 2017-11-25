@@ -13,9 +13,19 @@ class Media::Base
   end
 end
 
+class Media::HEVC
+  def self.glob
+    globbed = Dir.glob(scan_path + "/BDMV/index.bdmv").map {|s| s.gsub("/BDMV/index.bdmv","") }
+    track_scan globbed
+  end
+  def initialize_hd
+    @codec = %Q|-q 25 -e x265 --encoder-preset veryfast --encoder-tune "ssim" --encoder-profile main10 |
+    @audio = %Q|-E av_aac -6 5point1 -R Auto --aq 127 --audio-copy-mask aac|
+  end
+end
 
 pack = Packer.new
-pack.add Media::BDMV.glob 
+pack.add Media::HEVC.glob 
 pack.encode
 pack.exec
 
