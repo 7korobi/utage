@@ -69,7 +69,7 @@ class Media::AlbumMovie < Media::Handbrake
   end
 
   def initialize_sd
-    @codec = %Q|-q 28 --detelecine -e x265 --h264-level="4.2"|
+    @codec = %Q|-q 28 --detelecine -e x265_12bit --h264-level="4.2"|
     @audio = %Q|-E ca_aac -6 dpl2 -R Auto -B 64 -D 0 --gain 0|
   end
 

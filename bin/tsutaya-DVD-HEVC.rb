@@ -32,7 +32,7 @@ class Media::HEVC
   end
 
   def initialize_sd
-    @codec = %Q|-q 27 -e x265 --encoder-preset faster --encoder-tune "ssim" --encoder-profile main10 |
+    @codec = %Q|-q 27 -e x265_12bit --encoder-preset faster --encoder-tune "ssim" --encoder-profile main12 |
     @audio = %Q|-E av_aac -6 dpl2 -R Auto --aq 80 --audio-copy-mask aac|
   end
 end

@@ -15,7 +15,7 @@ end
 
 class Media::HEVC
   def initialize_hd
-    @codec = %Q|-q 25 -e x265 --encoder-preset veryfast --encoder-tune "ssim" --encoder-profile main10 |
+    @codec = %Q|-q 25 -e x265_12bit --encoder-preset veryfast --encoder-tune "ssim" --encoder-profile main12 |
     @audio = %Q|-E av_aac -6 5point1 -R Auto --aq 127 --audio-copy-mask aac|
   end
 end

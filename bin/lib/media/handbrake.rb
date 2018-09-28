@@ -75,7 +75,7 @@ class Media::Handbrake < Media::Base
   end
 
   def format
-    %Q|-P -f mp4 -4 --vfr --loose-anamorphic --modulus 4|
+    %Q|-f mp4 -4 --vfr --loose-anamorphic --modulus 4|
   end
 
   def do_deploy

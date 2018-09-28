@@ -14,7 +14,7 @@ class Media::Movie < Media::Handbrake
   end
 
   def initialize_sd
-    @codec = %Q|-q 28 --detelecine -e x265 --h264-level="4.2" --encoder-preset slower --encoder-tune "ssim" --encoder-profile main10|
+    @codec = %Q|-q 28 --detelecine -e x265_12bit --h264-level="4.2" --encoder-preset slower --encoder-tune "ssim" --encoder-profile main12|
     @audio = %Q|-E av_aac -6 dpl2 -R Auto -B 80 -D 0 --gain 0|
   end
 
