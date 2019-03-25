@@ -8,10 +8,9 @@ $is_done = {}
 
 def scan_names( leaf_key, key )
   open( $url_head + leaf_key ) do |f|
-    write_at = (f.last_modified.to_f * 1000 ).to_i
     body = f.read.encode("UTF-8", "Shift_JIS").scan %r|<pre>(.+)</pre>|m
     p f.base_uri
-    $is_done[leaf_key] = (f.last_modified.to_f * 1000 ).to_i 
+    $is_done[leaf_key] = f.last_modified
 
     suburls = body[0][0].scan %r|<a href=([^.]+\.htm)|
     suburls.each do |(leaf_key)|
@@ -29,7 +28,7 @@ def scan_names( leaf_key, key )
       end
     end
     body = body.split(/\n/).map {|s| s.split(" ") }
-    body.each_with_index do |ary, idx|
+    body.each do |ary|
       if ary.size != 2
         p ary
         next
@@ -40,7 +39,6 @@ def scan_names( leaf_key, key )
             "spell" => spell,
             "name" => name,
             "key" => key[0..-5],
-            "_id" => "#{leaf_key[0..-5]}-#{idx}",
           }])
           File.open($out, "a") do |f|
             f.write yml[4..]
@@ -62,7 +60,6 @@ open( $url_head + "alnatix.htm") do |f|
       end
   end
 
-  write_at = (f.last_modified.to_f * 1000 ).to_i 
   countrydb = {}
   countries.each do |(key, country)|
     _id = key[0..-5]
