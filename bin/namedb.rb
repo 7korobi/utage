@@ -3,15 +3,15 @@ require 'yaml'
 
 $url_head = "http://www5a.biglobe.ne.jp/dinah/names/alphaNat/"
 
-$out = "./namedb.yml"
+$out = "../../giji-fire-new/yaml/work_namedb.yml"
 $is_done = {}
 
 def scan_names( leaf_key, key )
   open( $url_head + leaf_key ) do |f|
-    $is_done[leaf_key] = true
     write_at = (f.last_modified.to_f * 1000 ).to_i
     body = f.read.encode("UTF-8", "Shift_JIS").scan %r|<pre>(.+)</pre>|m
     p f.base_uri
+    $is_done[leaf_key] = (f.last_modified.to_f * 1000 ).to_i 
 
     suburls = body[0][0].scan %r|<a href=([^.]+\.htm)|
     suburls.each do |(leaf_key)|
@@ -37,11 +37,10 @@ def scan_names( leaf_key, key )
       ary[0].split("／").each do | spell |
         ary[1].split("／").each do | name |
           yml = YAML.dump([{
-            "write_at" => write_at,
             "spell" => spell,
             "name" => name,
-            "key" => key,
-            "_id" => "#{key}-#{leaf_key}.#{idx}",
+            "key" => key[0..-5],
+            "_id" => "#{leaf_key[0..-5]}-#{idx}",
           }])
           File.open($out, "a") do |f|
             f.write yml[4..]
@@ -66,23 +65,30 @@ open( $url_head + "alnatix.htm") do |f|
   write_at = (f.last_modified.to_f * 1000 ).to_i 
   countrydb = {}
   countries.each do |(key, country)|
-    countrydb[key] = {
-    "write_at" => write_at,
+    _id = key[0..-5]
+    countrydb[_id] = {
     "country" => country,
-    "_id" => key,
+    "_id" => _id,
     }
   end
 
   File.open($out,"w") do |f|
     YAML.dump({
       "by" => $url_head,
-      "country" => countrydb,
       "name" => nil,
     }, f)
   end
 
   countries.each do |key, _|
     scan_names( key, key )
+  end
+
+  yml = YAML.dump({
+    "country" => countrydb,
+    "timestamp" => $is_done,
+  })
+  File.open($out,"a") do |f|
+    f.write yml[4..]
   end
 
   YAML.load_file($out)
