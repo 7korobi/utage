@@ -17,14 +17,19 @@ def scan_names( leaf_key, key )
       next if $is_done[leaf_key]
       scan_names( leaf_key, key )
     end
-
-    body = body[0][0].gsub(/&#.[^;]+;/) do |code|
+    body = body[0][0].gsub(/&#[^;]+;/) do |code|
       case code[2]
       when 'x','X'
-        code[3..4].to_i(16).chr("UTF-8")
+        val = code[3..].to_i(16)
+        case val
+        when 0x80..0x9f
+          val.chr("cp1252").encode("UTF-8")
+        else
+          val.chr("UTF-8")
+        end
       else
         p code
-        code[2..4].to_i(10).chr("UTF-8")
+        code[2..].to_i(10).chr("UTF-8")
       end
     end
     body = body.split(/\n/).map {|s| s.split(" ") }
