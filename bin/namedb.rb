@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'yaml'
 
-$url_head = "http://www5a.biglobe.ne.jp/dinah/names/alphaNat/"
+$url_head = "http://newcomer.s206.xrea.com/names/alphaNat/"
 
 $out = "../../giji-fire-new/yaml/work_namedb.yml"
 $is_done = {}
