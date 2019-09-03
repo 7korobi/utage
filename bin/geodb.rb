@@ -107,7 +107,7 @@ def name_reduce!(root)
 end
 
 def label_set(prefecture, key, label)
-  (LABELS[key], unit) = label.split(/(地区）?$|[都府県市郡区村町]）?$)/)
+  (LABELS[key], unit) = label.split(/(地区$|[都府県市郡区村町]$)/)
   return if unit == label
   return unless unit
   label.tr!("()（）","")
@@ -229,8 +229,8 @@ open(FNAME_ZIPCODE) do |f|
         old[8] += ruby3
         old[5] = cut(old[4],  /（.*）/,"（）","、", /「.+?を除く」|「.+?」以外/)
         old[9] = cut(old[8], /\(.*\)/,"()","､", /<.+?ｦﾉｿﾞｸ>|<.+?>ｲｶﾞｲ/)
-      elsif m = town.match(/^#{old[4]}(（.+）)/)
-          mr = ruby3.match(/^#{old[8]}(\(.+\))/)
+      elsif m = town.match(/^#{old[4]}（(.+)）/)
+          mr = ruby3.match(/^#{old[8]}\((.+)\)/)
           old[5] = [*old[5],m[1]].uniq
           old[9] = [*old[9],mr[1]].uniq
       elsif hd = find_header(town, old[4])
@@ -274,13 +274,15 @@ POSTS_JIS_ZIP.each do |code, data|
   end.compact
   gap = "[#{divisions}）]"
   name = ""
+  towns = town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/)
+  cities = city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/)
   if 0 < etc.size
     etc.each do |etc_item|
       name = name_set(
         NAMES,
         prefecture,
-        *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-        *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
+        *cities,
+        *towns,
         "（#{etc_item}）"
       )
     end
@@ -289,8 +291,8 @@ POSTS_JIS_ZIP.each do |code, data|
     name = name_set(
       NAMES,
       prefecture,
-      *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-      *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
+      *cities,
+      *towns,
       )
   end
 end
@@ -312,11 +314,13 @@ open(FNAME_GEOCODE) do |f|
         PAST_DIC.dig(prefecture, c)&.keys
       end.compact
       gap = "[#{divisions}）]"
+      towns = town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/)
+      cities = city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/)
       name = name_set(
         NAME_GEOS,
         prefecture,
-        *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-        *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
+        *cities,
+        *towns,
       )
       ETCS[name] = etc if 0 < etc.size
       kata = [ruby1,ruby2,ruby3].join("").unicode_normalize(:nfkc)
