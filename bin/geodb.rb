@@ -370,7 +370,7 @@ File.open(FNAME_OUTPUT_YAML,"w") do |f|
 end
 
 File.open(FNAME_SNAP_HD + "dic.yml","w") do |f|
-  f.write YAML.dump DIC
+  f.write YAML.dump DIC.map{|dic| dic.sort.to_h }.to_h
 end
 File.open(FNAME_SNAP_HD + "etc.yml","w") do |f|
   f.write YAML.dump ETCS
