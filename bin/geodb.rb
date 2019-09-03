@@ -128,14 +128,18 @@ def name_set(names, *dirty)
   if tail.start_with? head
     full = tail
   else
-    if head[-1] == tail[0]
+    if ["#{head[-1]}庁","#{head[-1]}役所"].member? tail
       full = head + tail[1..]
     else
       full = head + tail
     end
   end
   names[full] ||= 0
-  label_set(dirty[0], full, tail)
+  if full[/#{tail}.#{tail}$/]
+    LABELS[full] = tail
+  else
+    label_set(dirty[0], full, tail)
+  end
   full
 end
 
@@ -372,7 +376,7 @@ end
 
 DIC.each do |key, dic|
   dic.each do |k, d|
-    d.replace d.sort.to_h
+    d.replace d.sort.reverse.to_h
   end
   dic.replace dic.sort.to_h
 end
