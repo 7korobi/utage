@@ -360,7 +360,7 @@ CHECK_GEOS = {}
 geo = {
   "zips" => GEOS,
   "names" => name_reduce!(NAME_GEOS),
-  "labels" => label_reduce(NAME_GEOS, CHECK_GEOS),
+  "labels" => label_reduce(NAME_GEOS, CHECK_GEOS).sort.to_h,
 }
 
 CHECKS = {}
