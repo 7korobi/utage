@@ -161,7 +161,6 @@ def to_katakana(src)
   end.join("")
 end
 
-=begin
 uri = URI.parse("http://www.amano-tec.com/data/download.php")
 http = Net::HTTP.new(uri.host, uri.port)
 req = Net::HTTP::Post.new(uri.path)
@@ -187,7 +186,6 @@ open('https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/ken_all.zip') do |fr|
     fw.write fr.read
   end
 end
-=end
 
 Zip::File.open(FNAME_GEOCODE_ZIP) do |zip|
   zip.each do |entry|
@@ -369,8 +367,11 @@ File.open(FNAME_OUTPUT_YAML,"w") do |f|
   f.write YAML.dump geo
 end
 
+DIC.each do |key, dic|
+  dic.replace dic.sort.to_h
+end
 File.open(FNAME_SNAP_HD + "dic.yml","w") do |f|
-  f.write YAML.dump DIC.map{|dic| dic.sort.to_h }.to_h
+  f.write YAML.dump DIC
 end
 File.open(FNAME_SNAP_HD + "etc.yml","w") do |f|
   f.write YAML.dump ETCS
