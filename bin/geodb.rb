@@ -11,7 +11,7 @@ FNAME_GEOCODE = "../data/geolist_utf8.csv"
 FNAME_ZIPCODE = "../data/zipcode_sjis.csv"
 
 
-FNAME_SNAP_YAML   = "../../giji-fire-new/yaml/work_geo_snapshot.yml"
+FNAME_SNAP_HD     = "../../giji-fire-new/yaml/work_geo_"
 FNAME_OUTPUT_YAML = "../../giji-fire-new/yaml/work_geo.yml"
 
 POSTS_JIS_ZIP = {}
@@ -28,7 +28,7 @@ LABELS = {}
 DIC = {}
 TO_PREFECTURE = {}
 
-PAST_DIC = YAML.load_file(FNAME_SNAP_YAML)["dic"]
+PAST_DIC = YAML.load_file(FNAME_SNAP_HD + "dic.yml")
 
 def find_header(*args)
   ( 1 .. args.map(&:size).min ).reverse_each do |idx|
@@ -43,12 +43,23 @@ def cut(src, r, sep, gap, safe )
   hit = src[r]
   if hit
     src[r] = ""
-    list = hit.tr(sep,"").split(gap)
+    list = hit.tr(sep,"").split(gap).map {|s| "#{sep[0]}#{s}#{sep[1]}" }
+    if saved
+      list.each do |s|
+        s.gsub!("@@@", saved) 
+      end
+    end
   else
     list = []
+    if saved
+      src.gsub!("@@@", saved) 
+    end
   end
-  src.gsub!("@@@", saved) if saved
   list.uniq.select {|s| ! [nil,""].member? s }
+end
+
+def to_etc(*ary)
+  ary.uniq.select {|s| !([nil, ""].member? s) }
 end
 
 def label_reduce(root, checker = {}, dest = {})
@@ -79,7 +90,7 @@ def name_reduce!(root)
       LABELS[new_key] = LABELS[key]
       root.delete(key)
     else
-      name_reduce!(item)
+      item.replace name_reduce!(item).sort.to_h
     end
   end
   news.each do |key, val|
@@ -95,6 +106,7 @@ def label_set(prefecture, key, label)
   (LABELS[key], unit) = label.split(/([都府県市郡区村町]）?$)/)
   return if unit == label
   return unless unit
+  label.tr!("()（）","")
   unit.tr!("()（）","")
   DIC[prefecture] ||= {}
   DIC[prefecture][unit] ||= {}
@@ -200,31 +212,31 @@ open(FNAME_ZIPCODE) do |f|
     jiszipcode = jiscode + zipcode
     if old = POSTS_JIS_ZIP[jiszipcode]
       if old[4]["（"] && ! old[4]["）"]
+        town.gsub!("その他）", "）")
+        ruby3.gsub!("ｿﾉﾀ\)", ")")
         old[4] += town
         old[8] += ruby3
+        old[5] = cut(old[4],  /（.*）/,"（）","、", /「.+を除く」/)
+        old[9] = cut(old[8], /\(.*\)/,"()","､", /<.+ｦﾉｿﾞｸ>/)
       elsif m = town.match(/^#{old[4]}(（.+）)/)
           mr = ruby3.match(/^#{old[8]}(\(.+\))/)
           old[5] = [*old[5],m[1]].uniq
           old[9] = [*old[9],mr[1]].uniq
       elsif hd = find_header(town, old[4])
         if rubyhd = find_header(ruby3, old[8])
-          old[5] = [old[4], *old[5], town].map {|s| s.gsub(hd, "") }
+          old[5] = to_etc *[old[4], *old[5], town].map {|s| s.gsub(hd, "") }
           old[4] = hd
-          old[9] = [old[8], *old[9], ruby3].map {|s| s.gsub(rubyhd, "") }
+          old[9] = to_etc *[old[8], *old[9], ruby3].map {|s| s.gsub(rubyhd, "") }
           old[8] = rubyhd
         else
           p [[old[3], old[4], old[8]],[city, town, ruby3]]
         end
       else
-        towns = [old[4], *old[5], town].uniq.select {|s| !([nil, ""].member? s) }
+        old[5] = to_etc old[4], *old[5], town
         old[4] = ""
-        old[5] = towns
-        towns_ruby = [old[8], *old[9], ruby3].uniq.select {|s| !([nil, ""].member? s) }
+        old[9] = to_etc old[8], *old[9], ruby3
         old[8] = ""
-        old[9] = towns_ruby
       end
-      # old[5] = cut(old[4], /（.*）/,"（）","、", /「.+を除く」/)
-      # old[9] = cut(old[8], /\(.*\)/,"()","､", /<.+ｦﾉｿﾞｸ>/)
       next
     end
     if /以下に掲載がない場合|の次に番地がくる場合$/ === town
@@ -248,13 +260,26 @@ POSTS_JIS_ZIP.each do |code, data|
     PAST_DIC.dig(prefecture, c)&.keys
   end.compact
   gap = "[#{divisions}）]"
-  name = name_set(
-    NAMES,
-    prefecture,
-    *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-    *town.split(/(.+?[町村](?!#{gap}))/)
-  )
-  ETCS[name] = etc if 0 < etc.size
+  name = ""
+  if 0 < etc.size
+    etc.each do |etc_item|
+      name = name_set(
+        NAMES,
+        prefecture,
+        *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
+        *town.split(/(.+?[町村](?!#{gap}))/),
+        etc_item
+      )
+    end
+    ETCS[name] = etc 
+  else
+    name = name_set(
+      NAMES,
+      prefecture,
+      *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
+      *town.split(/(.+?[町村](?!#{gap}))/)
+    )
+  end
 end
 
 p "...GEOCODE scan"
@@ -339,22 +364,28 @@ geo = {
 }
 
 CHECKS = {}
-snapshot = {
-  "names" => name_reduce!(NAMES),
-  "labels" => label_reduce(NAMES, CHECKS),
-  "etc" => ETCS,
-  "check" => CHECKS,
-  "dic" => DIC
-}
 
 File.open(FNAME_OUTPUT_YAML,"w") do |f|
   f.write YAML.dump geo
 end
-File.open(FNAME_SNAP_YAML,"w") do |f|
-  f.write YAML.dump snapshot
+
+File.open(FNAME_SNAP_HD + "dic.yml","w") do |f|
+  f.write YAML.dump DIC
+end
+File.open(FNAME_SNAP_HD + "etc.yml","w") do |f|
+  f.write YAML.dump ETCS
+end
+File.open(FNAME_SNAP_HD + "name.yml","w") do |f|
+  f.write YAML.dump name_reduce!(NAMES)
+end
+File.open(FNAME_SNAP_HD + "label.yml","w") do |f|
+  f.write YAML.dump label_reduce(NAMES, CHECKS).sort.to_h
 end
 
 
 # data structure check.
 YAML.load_file(FNAME_OUTPUT_YAML)
-YAML.load_file(FNAME_SNAP_YAML)
+YAML.load_file(FNAME_SNAP_HD + "name.yml")
+YAML.load_file(FNAME_SNAP_HD + "label.yml")
+YAML.load_file(FNAME_SNAP_HD + "etc.yml")
+YAML.load_file(FNAME_SNAP_HD + "dic.yml")
