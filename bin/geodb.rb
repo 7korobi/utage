@@ -38,28 +38,32 @@ def find_header(*args)
 end
 
 def cut(src, r, sep, gap, safe )
-  saved = src[safe]
-  src.gsub!(safe, "@@@")
+  saves = src.scan(safe)
+  saves.each_with_index {|saved, idx| src.sub!(saved,"@#{idx}@") }
   hit = src[r]
   if hit
     src[r] = ""
-    list = hit.tr(sep,"").split(gap).map {|s| "#{sep[0]}#{s}#{sep[1]}" }
-    if saved
-      list.each do |s|
-        s.gsub!("@@@", saved) 
+    list = hit.tr(sep,"").split(gap)
+    if saves
+      saves.each_with_index do |saved, idx|
+        list.each do |s|
+          s.sub!("@#{idx}@", saved)
+        end
       end
     end
   else
     list = []
-    if saved
-      src.gsub!("@@@", saved) 
+    if saves
+      saves.each_with_index do |saved, idx|
+        src.sub!("@#{idx}@", saved)
+      end
     end
   end
   list.uniq.select {|s| ! [nil,""].member? s }
 end
 
-def to_etc(*ary)
-  ary.uniq.select {|s| !([nil, ""].member? s) }
+def to_etc(sep, *ary)
+  ary.map {|s| s.tr(sep,"") }.uniq.select {|s| ! [nil, ""].member? s }
 end
 
 def label_reduce(root, checker = {}, dest = {})
@@ -103,7 +107,7 @@ def name_reduce!(root)
 end
 
 def label_set(prefecture, key, label)
-  (LABELS[key], unit) = label.split(/([都府県市郡区村町]）?$)/)
+  (LABELS[key], unit) = label.split(/(地区）?$|[都府県市郡区村町]）?$)/)
   return if unit == label
   return unless unit
   label.tr!("()（）","")
@@ -118,12 +122,12 @@ def name_set(names, *dirty)
   head = ""
   args.each_with_index do |arg, idx|
     label = arg
-    head = arg = head + arg
-    if [nil, 0].member? names[arg]
-      names[arg] = {}
+    head = head + arg
+    unless Hash === names[head]
+      names[head] = {}
     end
-    names = names[arg]
-    label_set(dirty[0], arg, label)
+    names = names[head]
+    label_set(dirty[0], head, label)
   end
   if tail.start_with? head
     full = tail
@@ -166,6 +170,7 @@ def to_katakana(src)
 end
 
 
+=begin
 open('https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/ken_all.zip') do |fr|
   File.open(FNAME_ZIPCODE_ZIP,'w') do |fw|
     fw.write fr.read
@@ -180,7 +185,6 @@ Zip::File.open(FNAME_ZIPCODE_ZIP) do |zip|
   end
 end
 
-=begin
 uri = URI.parse("http://www.amano-tec.com/data/download.php")
 http = Net::HTTP.new(uri.host, uri.port)
 req = Net::HTTP::Post.new(uri.path)
@@ -218,28 +222,30 @@ open(FNAME_ZIPCODE) do |f|
     if old = POSTS_JIS_ZIP[jiszipcode]
       if old[4]["（"] && ! old[4]["）"]
         town.gsub!("その他）", "）")
+        town.gsub!("（次のビルを除く）","")
         ruby3.gsub!("ｿﾉﾀ\)", ")")
+        ruby3.gsub!("(ﾂｷﾞﾉﾋﾞﾙｦﾉｿﾞｸ)","")
         old[4] += town
         old[8] += ruby3
-        old[5] = cut(old[4],  /（.*）/,"（）","、", /「.+を除く」/)
-        old[9] = cut(old[8], /\(.*\)/,"()","､", /<.+ｦﾉｿﾞｸ>/)
+        old[5] = cut(old[4],  /（.*）/,"（）","、", /「.+?を除く」|「.+?」以外/)
+        old[9] = cut(old[8], /\(.*\)/,"()","､", /<.+?ｦﾉｿﾞｸ>|<.+?>ｲｶﾞｲ/)
       elsif m = town.match(/^#{old[4]}(（.+）)/)
           mr = ruby3.match(/^#{old[8]}(\(.+\))/)
           old[5] = [*old[5],m[1]].uniq
           old[9] = [*old[9],mr[1]].uniq
       elsif hd = find_header(town, old[4])
         if rubyhd = find_header(ruby3, old[8])
-          old[5] = to_etc *[old[4], *old[5], town].map {|s| s.gsub(hd, "") }
+          old[5] = to_etc "（）", *[old[4], *old[5], town].map {|s| s.gsub(hd, "") }
           old[4] = hd
-          old[9] = to_etc *[old[8], *old[9], ruby3].map {|s| s.gsub(rubyhd, "") }
+          old[9] = to_etc "()", *[old[8], *old[9], ruby3].map {|s| s.gsub(rubyhd, "") }
           old[8] = rubyhd
         else
           p [[old[3], old[4], old[8]],[city, town, ruby3]]
         end
       else
-        old[5] = to_etc old[4], *old[5], town
+        old[5] = to_etc "（）", old[4], *old[5], town
         old[4] = ""
-        old[9] = to_etc old[8], *old[9], ruby3
+        old[9] = to_etc "()", old[8], *old[9], ruby3
         old[8] = ""
       end
       next
@@ -249,9 +255,11 @@ open(FNAME_ZIPCODE) do |f|
     end
 
     town.gsub!("その他）", "）")
+    town.gsub!("（次のビルを除く）","")
     ruby3.gsub!("ｿﾉﾀ\)", ")")
-    etc   = cut(town,  /（.*）/,"（）","、", /「.+を除く」/)
-    ruby4 = cut(ruby3, /\(.*\)/,"()","､", /<.+ｦﾉｿﾞｸ>/)
+    ruby3.gsub!("(ﾂｷﾞﾉﾋﾞﾙｦﾉｿﾞｸ)","")
+    etc   = cut(town,  /（.*）/,"（）","、", /「.+?を除く」|「.+?」以外/)
+    ruby4 = cut(ruby3, /\(.*\)/,"()","､", /<.+?ｦﾉｿﾞｸ>|<.+?>ｲｶﾞｲ/)
     POSTS_JIS_ZIP[jiszipcode] = POSTS_ZIP[zipcode] = POSTS_JIS[jiscode] = [zipcode, jiscode, prefecture, city, town, etc, ruby1, ruby2, ruby3, ruby4]
     TO_PREFECTURE[city] = TO_PREFECTURE[prefecture] ||= [prefecture, ruby1]
   end
@@ -272,8 +280,8 @@ POSTS_JIS_ZIP.each do |code, data|
         NAMES,
         prefecture,
         *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-        *town.split(/(.+?[町村](?!#{gap}))/),
-        etc_item
+        *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
+        "（#{etc_item}）"
       )
     end
     ETCS[name] = etc 
@@ -282,8 +290,8 @@ POSTS_JIS_ZIP.each do |code, data|
       NAMES,
       prefecture,
       *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-      *town.split(/(.+?[町村](?!#{gap}))/)
-    )
+      *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
+      )
   end
 end
 
@@ -308,7 +316,7 @@ open(FNAME_GEOCODE) do |f|
         NAME_GEOS,
         prefecture,
         *city.split(/(#{dic.join("|")}|.+?#{gap}(?!#{gap}))/),
-        *town.split(/(.+?[町村](?!#{gap}))/)
+        *town.split(/(.+?町|.+?村|[東西南北]?[一二三四五六七八九十廿]+(?:条|条通り)|[０-９].+$)(?!#{gap})/),
       )
       ETCS[name] = etc if 0 < etc.size
       kata = [ruby1,ruby2,ruby3].join("").unicode_normalize(:nfkc)
