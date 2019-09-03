@@ -161,6 +161,22 @@ def to_katakana(src)
   end.join("")
 end
 
+
+open('https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/ken_all.zip') do |fr|
+  File.open(FNAME_ZIPCODE_ZIP,'w') do |fw|
+    fw.write fr.read
+  end
+end
+
+Zip::File.open(FNAME_ZIPCODE_ZIP) do |zip|
+  zip.each do |entry|
+    if "KEN_ALL.CSV" == entry.name
+      zip.extract(entry, FNAME_ZIPCODE) { true }
+    end
+  end
+end
+
+=begin
 uri = URI.parse("http://www.amano-tec.com/data/download.php")
 http = Net::HTTP.new(uri.host, uri.port)
 req = Net::HTTP::Post.new(uri.path)
@@ -181,12 +197,6 @@ File.open(FNAME_GEOCODE_ZIP,'w') do |fw|
   fw.write res.body
 end
 
-open('https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/ken_all.zip') do |fr|
-  File.open(FNAME_ZIPCODE_ZIP,'w') do |fw|
-    fw.write fr.read
-  end
-end
-
 Zip::File.open(FNAME_GEOCODE_ZIP) do |zip|
   zip.each do |entry|
     if "h3010puboffice_utf8.csv" == entry.name
@@ -194,14 +204,7 @@ Zip::File.open(FNAME_GEOCODE_ZIP) do |zip|
     end
   end
 end
-
-Zip::File.open(FNAME_ZIPCODE_ZIP) do |zip|
-  zip.each do |entry|
-    if "KEN_ALL.CSV" == entry.name
-      zip.extract(entry, FNAME_ZIPCODE) { true }
-    end
-  end
-end
+=end
 
 p "...ZIPCODE scan"
 open(FNAME_ZIPCODE) do |f|
@@ -368,6 +371,9 @@ File.open(FNAME_OUTPUT_YAML,"w") do |f|
 end
 
 DIC.each do |key, dic|
+  dic.each do |k, d|
+    d.replace d.sort.to_h
+  end
   dic.replace dic.sort.to_h
 end
 File.open(FNAME_SNAP_HD + "dic.yml","w") do |f|
